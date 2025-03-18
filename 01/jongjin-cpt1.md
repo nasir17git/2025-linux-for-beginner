@@ -15,6 +15,9 @@
   - 실행되어 동작중인 프로그램
   - 프로세스는 프로그램에 포함됨
 
+![image](https://github.com/user-attachments/assets/f71f77bd-3950-4f7a-80d5-91a1cea02f17)
+
+
 ## 커널
 
 > A kernel is a computer program at the core of a computer's operating system that always has complete control over everything in the system. [Wikipedia](https://en.wikipedia.org/wiki/Kernel_(operating_system))
@@ -24,8 +27,11 @@
 
 - 프로세스가 장치에 직접 접근가능하다면 동시성? eventual consistency 이슈 발생 가능
   - [Amazon S3 데이터 일관성 모델](https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/Welcome.html#ConsistencyModel) 떠올랐네요
+  - 아님 mysql 격리모델같은것두 비슷한거같고
+  - 저장장치 말고 다른 장치 (network등)이면 무슨문제있으려나
   - 서로 다른 프로세스가 같은 장치를 제어하려고하면 순서 이슈 발생 가능
   - 또는 접근 권한에 관한 문제 발생 가능
+  
 
 - 커널은 하드웨어의 도움을 받아, 다시말해 CPU의 모드 기능을 통해 프로세스의 직접 접근을 제한함
   - 일반적인 CPU에는 크게 커널 모드와 사용자 모드 두 모드가 존재
@@ -35,6 +41,9 @@
   - 참고
     - https://zu-techlog.tistory.com/122
     - https://makelinux.github.io/kernel/map/
+
+![image](https://github.com/user-attachments/assets/d5401160-9670-460a-91ee-ab189a71f9ae)
+
 
 ## 시스템 콜
 > a system call (commonly abbreviated to syscall) is the programmatic way in which a computer program requests a service from the operating system on which it is executed. [System call](https://en.wikipedia.org/wiki/System_call)
@@ -51,8 +60,12 @@
   - 처리범위 내의 메모리 등
 - 시스템 콜을 통하지 않고 직접 CPU 모드를 변경할 수 없음
 
+![image](https://github.com/user-attachments/assets/1c3f552b-1b1a-427d-8524-6606adc23798)
+
+
 ### 시스템 콜 확인하기 - strace
-[strace - trace system calls and signals](https://man7.org/linux/man-pages/man1/strace.1.html)
+[strace - trace system calls and signals](https://man7.org/linux/man-pages/man1/strace.1.html)    
+system trace?
 
 - strace 명령어를 통해 프로세스가 어떤 시스템 콜을 호출 하는 지 확인 가능
   - -o 옵션을 통해 출력 저장 가능
@@ -98,7 +111,7 @@ awk '{ print $1 }' hello.py.log | sort | uniq -c | sort -nr
 
 
 ### 시스템 콜을 처리하는 시간 비율 - sar
-[sar - Collect, report, or save system activity information](https://linux.die.net/man/1/sar)
+[sar - Collect, report, or save system activity information](https://linux.die.net/man/1/sar)    
 System Activity Report
 
 시스템에 설치된 논리 CPU가 실행하고 있는 명령 비율은 sar 명령어를 통해 확인가능
@@ -258,3 +271,26 @@ nasir-pc# ll pause.so
 - 일반적으로는 공유라이브러리 사용
   - 시스템에서 차지하는 크기 줄이기
   - 라이브러리 문제시 개별 프로그램을 재빌드하기보다는, 공유 라이브러리 교체로 해결가능
+
+![image](https://github.com/user-attachments/assets/f0b3b86a-c462-499b-941a-36c2be91ff6e)
+
+
+### 정적 링크가 돌아왔다 
+- 일반적으로 공유라이브러리가 많이 사용되어왔음
+- 최근의 Go 등의 언어는 기본적으로 정적라이브러리 사용
+  - 대용량 메모리/저장장치로 인해 파일 크기 문제는 중요X
+  - 실행파일만 가져가면 되므로 사용 편리
+  - 공유라이브러리 링크가 필요하지 않아 시작시간 빠름
+  - DLL Hell 회피 가능
+
+- DLL Hell
+  - 공유 라이브러리 업데이트 시 링크된 어플리케이션들 모두 업데이트 필요
+  - 그렇지않다면 어플리케이션 간 필요한 공유라이브러리 버전이 달라 버전충돌 가능성 존재  
+![image](https://github.com/user-attachments/assets/d6b7ce4c-a13d-4966-bc92-6bcf43debddf)
+
+---
+
+[Alpine Linux uses musl libc, a lightweight, fast, simple and standards-conform C library.](https://stackoverflow.com/questions/37818831/is-there-a-best-practice-on-setting-up-glibc-on-docker-alpine-linux-base-image)
+![image (7)](https://github.com/user-attachments/assets/ebbfa65a-defc-4a34-8314-95616b3d7acd)
+
+
