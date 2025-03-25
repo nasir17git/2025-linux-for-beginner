@@ -16,6 +16,8 @@ ps -aux --no-header | wc -l
 # 71
 ```
 
+ps afxuwww
+https://linuxer.name/2020/07/linux-%EC%9C%A0%EC%9A%A9%ED%95%9C-%EB%AA%85%EB%A0%B9%EC%96%B4/
 
 
 ## 프로세스 생성
