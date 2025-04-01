@@ -7,12 +7,17 @@
 - 하나의 논리 CPU는 동시에 하나의 프로세스만 처리
 - 실행가능한 프로세스가 타임슬라이스(time slice) 단위로 CPU 사용
 
-
+![image](https://github.com/user-attachments/assets/62c15262-63de-4da2-baa1-7bee91888096)
+- Ready Queue와 Waiting Queue 정도만 들어봤던것 같은데..
+ 
 ## 기본지식: 경과 시간과 사용 시간
 - 경과 시간(elapsed time)
   - process 시작부터 종료까지의 경과시간
 - 사용 시간(CPU time)
   - 프로세스가 실제로 CPU를 사용한 시간
+
+![761](https://github.com/user-attachments/assets/26ec7313-31dd-457b-8dfb-32eae35cb36b)
+
 
 time 명령어를 통해 확인해보기
 - 출력결과의 total(real)/user/sys 확인 가능
@@ -20,6 +25,7 @@ time 명령어를 통해 확인해보기
   - user & sys > 사용 시간
     - user > 프로세스가 사용자 공간에서 동작한 시간
     - sys > 프로세스의 시스템콜 등에 소요된 시간
+
 ``` 
 time ./load.py
 ./load.py  1.51s user 0.01s system 99% cpu 1.526 total
@@ -118,15 +124,19 @@ sched.py <프로세스 개수>
 ```
 for i in 1 2 3; do ./sched.py $i; done
 ```
+![sched-3-default](https://github.com/user-attachments/assets/0a7950f5-e818-46fe-a883-6896c69019b0)
 
 
 ### 타임 슬라이스 구조
 - 동시실행 2 대비 동시실행3인 경우 각 프로세스의 타임 슬라이스가 짧음
-- 리눅스 스케줄러는 sysctl의 kernel.sched_latency_ns 파라미터의 간격에 따라 CPU 시간을 가져옴
+- 리눅스 스케줄러는 sysctl의 kernel.sched_latency_ns 파라미터의 목표 레이턴시 간격에 한번씩 timeslice 획득
 
 ```
 sysctl kernel.sched_latency_ns
 sysctl: cannot stat /proc/sys/kernel/sched_latency_ns: No such file or directory
+
+cat /sys/kernel/debug/sched/latency_ns 
+24000000
 
 mount -t debugfs none /sys/kernel/debug
 cat /sys/kernel/debug/sched/debug | grep latency
@@ -139,6 +149,10 @@ cat /sys/kernel/debug/sched/debug | grep latency
 - 요즘 스케줄러는 프로세스 개수에 따라 동적으로 변경
   - 커널 버전 확인 uname -r
   - 5.15.167.4-microsoft-standard-WSL2
+
+
+![image](https://github.com/user-attachments/assets/8686014b-34b7-41a8-9ad3-8f976b8d79bf)    
+목표 레이턴시가 6ms고 프로세스가 3개면 timeslice 3ms로 유동적조절
 
 목표 레이턴시 또는 타임 슬라이스 값 계산시 영향 끼치는 요소들
 - 시스템에 설치된 논리 CPU 개수
@@ -162,6 +176,14 @@ nice
 ./sched-nice.py 5
 ```
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e413594c-9178-4d5e-8338-45ffecc6de28" alt="avg-tat-24" width="45%" />
+  <img src="https://github.com/user-attachments/assets/9e6c9f79-ef99-4465-b77d-f93e1d20177e" alt="throughput-24" width="45%" />
+</p>
+
+좌측(default) / 우측 (nice)
+- nice 값 차이로 인해 부하처리 0가 1보다 더 많은 타임슬라이스를 가져감 <?
+
 스케줄러의 구현사항은 POSIX 표준이 아니므로 커널변경에 따라 변경 가능
 - kernel.sched_latency_ns 의 기본값이 수차례 변경되었음
 - ls -alh /proc/sys/kernel | grep sched
@@ -178,6 +200,9 @@ nice
 - 따라서 특정 프로세스의 처리속도가 느릴때,
   - 처리 자체에 문제가 있다 X
   - 처리 간 컨텍스트 스위치로 인해 다른 프로세스 동작가능성 있다 O
+
+![image](https://github.com/user-attachments/assets/8f9922c1-e5bd-404e-b9dd-b7a5df9aa069)
+- context switch overhead 랑은 다른이야기인것같군요
 
 ## 처리 성능
 정해진 성능요건 측정에 관한 지표
@@ -206,9 +231,11 @@ plot-perf.py <최대 프로세스 개수>
 - 'avg-tat.jpg' 파일에 평균 턴어라운드 타임 그래프를 저장합니다.
 - 'throughput.jpg' 파일에 스루풋 그래프를 저장합니다.
 
+----
+
 
 1논리 CPU, 8 최대 프로세스
-- ./cpuperf.sh 8
+- ./cpuperf.sh 24
   - 논리 CPU < 프로세스 개수 시 평균 처리시간 증가, 스루풋 차이없음
   - 프로세스 개수 늘리면 컨텍스트 스위치로 인해 평균 처리시간 지연, 스루풋 떨어짐
 
@@ -216,6 +243,12 @@ plot-perf.py <최대 프로세스 개수>
 - 사용자요청을 받아 파일 생성 후 돌려주는 프로그램 가정
   - 논리 CPU 부하가 높다면, 평균 처리시간이 점점 길어짐
   - 웹앱 응답시간 지연과 연결되므로 사용자 경험이 나빠짐
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2d407dea-95e5-421e-82ae-34f12a6c6d8f" alt="avg-tat-24" width="45%" />
+  <img src="https://github.com/user-attachments/assets/85a6a778-e796-470d-b067-7dbacadd241f" alt="throughput-24" width="45%" />
+</p>
   
 모든 논리 CPU를 사용해 성능 데이터 수집
 - grep -c processor /proc/cpuinfo
@@ -226,6 +259,12 @@ plot-perf.py <최대 프로세스 개수>
     - echo: write error: device or resource busy
 
 ./cpuperf.sh -m 24
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9b40ec9c-3d53-425e-b80d-b55616abfcc0" alt="avg-tat-24" width="45%" />
+  <img src="https://github.com/user-attachments/assets/9b37603e-5432-4204-9de5-1dba23bf8707" alt="throughput-24" width="45%" />
+</p>
+
+
 - 평균턴어라운드타임: 논리CPU개수(12)까지는 천천히/그뒤 급격히
 - 스루풋: 논리CPU개수(12)까지는 상승/ 이후 유지
 - 결론
