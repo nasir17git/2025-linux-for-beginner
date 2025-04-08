@@ -10,7 +10,10 @@ free 명령어로 확인가능
 - available: 실제로 사용가능한 메모리. free + 해제가능한 커널내부 메모리 영역(ex.page cache)
 - used: 시스템이 사용중인 메모리에서 buff/cache 를 제외한 값
 
-
+![image](https://github.com/user-attachments/assets/52489469-11f9-48b7-8db9-0ddcbb4a9a87)    
+[쿠버네티스가 쉬워지는 컨테이너 이야기 — memory편](https://medium.com/@7424069/%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4%EA%B0%80-%EC%89%AC%EC%9B%8C%EC%A7%80%EB%8A%94-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88-%EC%9D%B4%EC%95%BC%EA%B8%B0-memory%ED%8E%B8-62cafabfd160)
+- buff/cache의 일부는 종료되면서 메모리 할당 해제가 가능하다
+  
 ```
 free
 
@@ -142,6 +145,21 @@ dmesg 명령어를 통해 커널 로그를 확인 하면 oom-kill 이벤트 확�
 - ps aux > RSS 필드 모니터링
 
 
+![image](https://github.com/user-attachments/assets/80dd5345-04b3-4cc7-98b8-00eca45a80a9)    
+
+[쿠버네티스가 쉬워지는 컨테이너 이야기 — memory편](https://medium.com/@7424069/%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4%EA%B0%80-%EC%89%AC%EC%9B%8C%EC%A7%80%EB%8A%94-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88-%EC%9D%B4%EC%95%BC%EA%B8%B0-memory%ED%8E%B8-62cafabfd160)
+- oom_killer는 oom_badness()를 통해 계산된 oom_score에 따라 프로세스 종료
+  - oom_score > 커널이 자동 계산한 점수, /proc/<pid>/oom_score 로 확인가능, 높을수록 먼저 죽임
+  - oom_score_adj > 사용자가 수동으로 우선순위 조절 가능
+
+[LINUX 메모리 부족과 oom_killer 문제에 대한 이해와 대응](https://m.blog.naver.com/hanajava/223133077977)    
+1. 특정 프로세스를 죽임으로써, 최소한 양의 프로세스만 잃을 수 있어야 합니다.
+2. 많은 메모리를 회수할 수 있어야 합니다.
+3. 프로세스중 Leak 가 발생되지 않는 프로세스는 선택하지 않습니다.
+4. 사용자가 특별히 지정한 프로세스를 선택합니다.
+
+​
+
 ## 가상 메모리
 가상 메모리는 하드웨어와 소프트웨어(커널)을 연동하여 구현
 1. 가상 메모리가 없을 때 생기는 문제점
@@ -159,7 +177,9 @@ dmesg 명령어를 통해 커널 로그를 확인 하면 oom-kill 이벤트 확�
   - 메모리 확보 시마다 몇개의 메모리 영역으로 나뉘어져 있는지 관리 불편
   - 크기가 간격 용량보다 큰 데이터 묶음 사용 불가 (ex. 100바이트X3이지만 300바이트 배열 사용 불가)
 
-
+![image](https://github.com/user-attachments/assets/ebbb9c91-d78b-4e89-aaf6-8fa3750e3f19)    
+[Memory Fragmentation in operating system](https://er.yuvayana.org/memory-fragmentation-in-operating-system/)
+- 위 이미지에서 회색영역 10KB, 5KB, 15KB, ... 은 죽은 공간
 
 #### 멀티 프로세스 구현의 어려움
 - 프로세스 A를 실행시, 코드영역이 300~400(399), 데이터가 400~500으로 매핑
@@ -176,13 +196,21 @@ dmesg 명령어를 통해 커널 로그를 확인 하면 oom-kill 이벤트 확�
 - 실제 주소는 물리 주소(physical address), 접근가능 범위는 주소 공간(address space)
 - 2장의 `readelf` 또는 `cat /proc/<pid>/maps` 는 모두 가상 주소
 - 프로세스에서 실제 메모리, 물리주소를 직접 지정하는 방법은 X
+  
+![image](https://github.com/user-attachments/assets/815b6d49-bc62-4974-9724-e6134097c590)    
+[가상 메모리](https://ko.wikipedia.org/wiki/%EA%B0%80%EC%83%81_%EB%A9%94%EB%AA%A8%EB%A6%AC)
+- 가상 메모리를 사용 시, 프로세스가 활성되면 RAM(물리 메모리), 비활성화된 프로세스는 디스크에 상주한다?
 
 #### 페이지 테이블
 - page table: 가상 주소를 물리 주소로 변환하기 위해 커널 메모리 내부에 저장되어있음
   - CPU는 모든 메모리를 페이지 단위로 쪼개서 관리
   - 주소는 페이지 단위로 변환
-- page table entry: 페이지 테이블에서 한 페이지에 대응하는 데이터
+- page table entry(PTE): 페이지 테이블에서 한 페이지에 대응하는 데이터
   - 가상 주소 및 물리 주소 대응 정보 포함
+
+![image](https://github.com/user-attachments/assets/2ab37b28-b6b5-4013-93f4-61fa8b7d4bea)    
+[Difference between page table and inverted page table](https://cs.stackexchange.com/questions/66698/difference-between-page-table-and-inverted-page-table)
+- 각 프로세스 (Pi, Pj)의 Page 0는 페이지 테이블에 의해 각 물리 메모리 1,2를 할당받는다
 
 
 관리 주체
@@ -199,8 +227,16 @@ dmesg 명령어를 통해 커널 로그를 확인 하면 oom-kill 이벤트 확�
   - SIGSEGV 시그널 송신 > 보통은 강제종료
     - Segmentation Violation Signal
 
-
-
+![image](https://github.com/user-attachments/assets/a2290e30-f8f2-4be5-8f0a-c62d9497fdf5)    
+[[운영체제/OS] 메모리 관리 - 디맨드 페이징과 페이지 부재(Page Fault) Issue](https://studyandwrite.tistory.com/21)
+- page fault는 trap이라고도 불린다
+1. 프로세스는 자신이 사용하고자 하는 페이지가 page table에 존재하는지 확인한다. 
+2. 만약 physical memory에 사용하려는 page가 없으면, Page fault exception이 발생하고 커널모드로 전환된다. 
+3. OS는 page table entry의 정보 속에서 Backing storage의 어느 위치에 page가 존재하는지 확인한다. 
+4. 필요한 페이지를 physical memory에 load한다. 
+5. page table를 다시 업데이트 해준다. 
+6. 그리고 이제 원래 하려고 했던 instruction을 수행해준다.
+  
 `./segv.go`
 1. 비정상 주소 접근 전 '비정상 메모리 접근 전' 출력
 2. 반드시 접근이 실패하는 nil 주소에 아무 값(코드에선 0) 쓰기
@@ -227,6 +263,10 @@ main.main()
 프로세스의 페이지테이블을 사용해,
 - 물리 메모리상의 단편화된 영역이라도
 - 프로세스 가상 주소 공간에서는 커다란 하나의 영역으로 다루기 가능
+
+![image](https://github.com/user-attachments/assets/9ab2b1ba-9cb7-4463-b993-f54ab507310b)    
+[Introduction to Paging](https://os.phil-opp.com/paging-introduction/#paging)
+- 비연속적인 물리 메모리 구간이지만 가상메모리로 할당하여 사용가능
 
 
 #### 멀티 프로세스 구현의 어려움
@@ -305,6 +345,11 @@ Demand paging: 할당된 가상 메모리 페이지에 첫 접근 시 물리 메
   - 페이지 테이블 엔트리 X > 프로그램에 SIGSEGV
   - 페이지 테이블 엔트리 O, 물리 메모리 할당 X > 새로운 메모리 할당
 
+![image](https://github.com/user-attachments/assets/c60dbf35-ae84-4be4-b388-81b5a1f4ba9f)
+
+[Demand Paging In Operating System](https://er.yuvayana.org/demand-paging-in-operating-system/)
+- demand paging은 'disk swapping을 사용한 paging' 처럼 시스템 부하를 줄이기 위한 방법
+  - 불필요하면 디스크에 내려두고 필요하면 메모리에 로드
 
 `./demand-paging.py`
 1. '새로운 메모리 확보 전' 출력 및 입력 대기
@@ -464,8 +509,18 @@ Tue Apr  8 01:54:03 KST 2025: 118528 111840     0   1668
 - x84 아키텍쳐의 경우 4단 구조 페이지 테이블 사용
   - 평탄한 구조 대비 필요한 하위 페이지 테이블 만 생성하여 필요 메모리 감소
 - 페이지 테이블에 할당된 메모리는 `sar -r ALL` 중 `kbpgtbl` 필드에서 확인
+  
+![image](https://github.com/user-attachments/assets/2430ccaa-90ca-4d92-9a9a-6f6a71f4295e)    
+[How Do Multi-Level Page Tables Save Memory Space?](https://www.baeldung.com/cs/multi-level-page-tables)
+- 가상메모리는 메모리+디스크로 작동, 필요한거만 메모리에 올려서 쓰고 아닌건 디스크로
 
-
+![image](https://github.com/user-attachments/assets/77114212-53fd-4ae2-a8fa-4663fcddb7dd)    
+[x86 Page Tables](https://cs4118.github.io/www/2023-1/lect/18-x86-paging.html)
+- 레벨1에서 레벨4로 진화하면서, 하나씩 구성요소가 늘어남
+  - lvl1) PTE, Page Table Entry
+  - lvl2) + PGD, Page table Global Directory
+  - lvl3) + PGDP, Page table Global Directory Pointer
+  - lvl4) PGD, PUD(Page Upper Directory), PMD (Page Middle Directory), PTE 
 
 ### Huge Page
 리눅스에선 페이지당 크기가 큰 페이지를 이용하여 프로세스의 페이지 테이블에 필요한 메모리 용량 줄이기 가능
@@ -477,6 +532,13 @@ Tue Apr  8 01:54:03 KST 2025: 118528 111840     0   1668
 - mmap()함수의 `MAP_HUGETLB` 플래그 지정을 통해 사용가능
   - 데이터베이스, 가상머신 등 가상메모리를 대량으로 사용하는 프로세스면 사용 설정 고민
 
+![image](https://github.com/user-attachments/assets/f360f515-d4fe-4563-a80e-65221ec5e7e5)
+[Hugepage를 활용한 성능 향상: 자원 활용을 위한 효과적인 전략](https://s-space.snu.ac.kr/bitstream/10371/196495/1/000000177997.pdf)
+- PDF page 15, HugePage의 구조
+- 2번의 200KB malloc 과 1번의 800KB malloc 한다고했을때
+  - 리눅스 기본 4KB 페이지는 총 50x2 + 200 의 300개의 page 호출필요
+  - 2MB의 page를 사용하면 1200KB 메모리 할당을 한번의 호출로 처리가능
+  - 대신 2MB에서 1200KB을 제외한 나머지 공간은 단점 
 
 ### Transparent Huge Page(THP)
 Transparent Huge Page: 가상 주소 공간 내부의 연속된 4KiB 페이지가 조건을 만족하면 Huge Page로 변경
