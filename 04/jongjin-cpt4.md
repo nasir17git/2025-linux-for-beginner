@@ -9,10 +9,6 @@ free 명령어로 확인가능
 - buff/cache: 버퍼, 캐시, 페이지 캐시(8장)의 메모리, 시스템의 빈 메모리(free)가 줄면 시스템이 해제시킴
 - available: 실제로 사용가능한 메모리. free + 해제가능한 커널내부 메모리 영역(ex.page cache)
 - used: 시스템이 사용중인 메모리에서 buff/cache 를 제외한 값
-
-![image](https://github.com/user-attachments/assets/52489469-11f9-48b7-8db9-0ddcbb4a9a87)    
-[쿠버네티스가 쉬워지는 컨테이너 이야기 — memory편](https://medium.com/@7424069/%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4%EA%B0%80-%EC%89%AC%EC%9B%8C%EC%A7%80%EB%8A%94-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88-%EC%9D%B4%EC%95%BC%EA%B8%B0-memory%ED%8E%B8-62cafabfd160)
-- buff/cache의 일부는 종료되면서 메모리 할당 해제가 가능하다
   
 ```
 free
@@ -27,6 +23,11 @@ Mem:           15Gi       867Mi        13Gi       3.0Mi       859Mi        14Gi
 Swap:         4.0Gi          0B       4.0Gi
 ```
 
+![image](https://github.com/user-attachments/assets/52489469-11f9-48b7-8db9-0ddcbb4a9a87)    
+[쿠버네티스가 쉬워지는 컨테이너 이야기 — memory편](https://medium.com/@7424069/%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4%EA%B0%80-%EC%89%AC%EC%9B%8C%EC%A7%80%EB%8A%94-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88-%EC%9D%B4%EC%95%BC%EA%B8%B0-memory%ED%8E%B8-62cafabfd160)
+- buff/cache의 일부는 종료되면서 메모리 할당 해제가 가능하다
+
+  
 ### used
 - used 값은 프로세스+커널이 사용하는 메모리를 포함    
 - 커널을 제외하고 프로세스 메모리 관점에서 분석
