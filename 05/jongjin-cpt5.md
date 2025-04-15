@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/8d3360b2-dade-49f2-9d29-18e3918e4286)# 프로세스 관리(응용편)
+# 프로세스 관리(응용편)
 4장에 설명한 가상메모리 지식이 없으면 이해 어려운 프로세스 관리의 다른 기능 설명
 
 
