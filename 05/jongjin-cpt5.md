@@ -1,4 +1,4 @@
-# 프로세스 관리(응용편)
+![image](https://github.com/user-attachments/assets/8d3360b2-dade-49f2-9d29-18e3918e4286)# 프로세스 관리(응용편)
 4장에 설명한 가상메모리 지식이 없으면 이해 어려운 프로세스 관리의 다른 기능 설명
 
 
@@ -68,8 +68,12 @@ Swap:       4194304           0     4194304
   RSS  MAJFL  MINFL
 110288     0  26718
 ```
+![copy-on-write](https://wizardzines.com/images/uploads/copy-on-write.png)    
+[copy-on-write](https://wizardzines.com/comics/copy-on-write/)
+- 리눅스에서 프로세스 시작으로 많이 쓰이는 시스템콜은 fork()와 clone()
+- 간단히 보기
 
-
+- 
 ### execve() 함수 고속화: Demand paging
 - Demand paging: 처음에는 PTE만 생성, 실제 호출하여 사용시 물리 메모리 할당 
   - execve() 호출 시 PTE만 생성되고 실제 메모리 할당 X
@@ -80,6 +84,21 @@ Swap:       4194304           0     4194304
 ## 프로세스 통신
 프로세스 통신 (IPC, Inter-Process Communication)
 - 서로 다른 프로세스 간 데이터 공유 및 동기화를 위해 OS가 제공하는 기능
+
+
+![ICP](https://images.tpointtech.com/blog/images/what-is-inter-process-communication2.png)    
+[What is Inter Process Communication?](https://www.tpointtech.com/what-is-inter-process-communication)
+- 교재의 공유 메모리, 시그널, 파이프, 소켓, 외에도 다른 IPC 종류가 많다
+- 일반적으로 아래 7개를 많이 언급하는 듯함
+  1. Pipes
+  2. Shared Memory
+  3. Message Queue
+  4. Direct Communication
+  5. Indirect communication
+  6. Message Passing
+  7. FIFO
+- 교재의 시그널, 소켓 등은 별도 방법으로 소개됨
+- 누가 시작했는지 몰라도 이미지에 sharred memory로 오타냈더니sharred memory 쓰는 유사이미지 많이보임
 
 ### 공유 메모리
 ./non-shared-memory.py
@@ -112,6 +131,17 @@ Swap:       4194304           0     4194304
 자식 프로세스 종료 후 데이터 값: 2000
 ```
 
+![image](https://github.com/user-attachments/assets/d39da335-376a-49c7-bcc9-d16091ad5c70)    
+[IPC와 Shared Memory](https://dokhakdubini.tistory.com/490), [OS23 - Interprocess Communication | Shared Memory | Message Passing | Signals](https://youtu.be/DpuiwZN-7oc?si=Npl3xh8wejhzRlZ9)    
+- shared memory랑 message passing/queue 비교한 자료 많음
+- shared memory
+  - 장점 처음호출할때만 커널도움 받고 이후엔 안쓰니? 빠름
+  - 단점 유저프로세스에서 동기화/접근 제어방법 고려필요
+- message passing
+  - 커널에 생성되는 공유 메모리 > send, receive로 데이터 주고받기
+  - 장점 explicit sharing, 에러에 덜취약(OS,커널이 관리하니까)
+  - 단점 느림
+
 ### 시그널
 커스텀하게 사용할 수 있는 시그널도 존재, 이를 사용하여 프로세스간 진행정도 확인 가능
 - 기존) SIGINT, SIGTERM, SIGKILL과 같이 용도가 정해진 시그널
@@ -140,6 +170,11 @@ Swap:       4194304           0     4194304
 ❯ kill %1
 [1]  + 8034 terminated  dd if=/dev/zero of=test bs=1 count=1G  
 ```
+
+![signal](https://wizardzines.com/images/uploads/signals.png)    
+
+
+
 ### 파이프
 pipe(|): 프로그램끼리의 처리 결과 연계
 - free | awk '(NR==2){print $2}'
@@ -155,6 +190,10 @@ Swap:       4194304         524     4193780
 16196784
 ```
 
+![854](https://github.com/user-attachments/assets/d453dac1-f1f1-4ede-9e59-1a8ff4deefbd)      
+[OS24 - Pipes | Interprocess Communication](https://youtu.be/s-cBPllAYD8?si=CWmAO6vmCHD3SB8S&t=501)      
+ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+
 ### 소켓
 소켓(socket): 프로세스간 데이터를 주고받기 위한 양방향 통신 채널
 - 크게 2종류의 소켓 존재
@@ -164,6 +203,9 @@ Swap:       4194304         524     4193780
     - 인터넷 프로토콜 스위트(Internet protocol suite) 또는 TCP/IP에 따라 다수 프로세스간 통신
     - UNIX Socket에 비해 속도가 느리지만 다른 기기의 프로세스간 통신에 사용 가능
 - 친숙한 소켓: mysqld, docker daemon
+
+![unix domain sockets](https://wizardzines.com/images/uploads/unix-domain-sockets.png)    
+- 
 
 ## 배타적 제어
 배타적 제어(exclusive control): 특정 자원에 한번에 하나의 처리만 접근 가능하도록 관리
@@ -337,7 +379,7 @@ root         379       1     423  0   17 389669 36300 11 19:50 ?        00:00:00
   
   - 커널스레드는..
     - 논리 CPU가 여러개일때 동시 실행이 가능하다는 장점
-    - 생성 비용, 스레드 실행 전환 비용은 높은
+    - 생성 비용, 스레드 실행 전환 비용은 높음
   - goroutine은 사용자스레드로 구현됨
 
 - 프로세스가 아닌 커널이 직접 스레드를 만들기도함
@@ -352,3 +394,12 @@ root         379       1     423  0   17 389669 36300 11 19:50 ?        00:00:00
 ❯ ps aux | grep '\['
 nasir       5254  0.0  0.0   8172   728 pts/6    S+   20:07   0:00 grep --color=auto --exclude-dir=.bzr --exclude-dir=CVS --exclude-dir=.git --exclude-dir=.hg --exclude-dir=.svn --exclude-dir=.idea --exclude-dir=.tox --exclude-dir=.venv --exclude-dir=venv \[
 ```
+
+
+<p align="center">
+  <img src="https://i.sstatic.net/B0aVa.png" alt="avg-tat-24" width="45%" />
+  <img src="https://i.sstatic.net/kGZ7H.png" alt="throughput-24" width="45%" />
+</p>
+[What are the relations between processes, kernel threads, lightweight processes and user threads in Unix](https://unix.stackexchange.com/questions/472324/what-are-the-relations-between-processes-kernel-threads-lightweight-processes)
+
+- 왜 n to n 자료만 많이 보이는가
