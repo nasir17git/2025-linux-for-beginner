@@ -1,4 +1,4 @@
-# 프로세스 관리(응용편)
+![image](https://github.com/user-attachments/assets/337bb585-592e-4f30-b771-d0405f95f369)# 프로세스 관리(응용편)
 4장에 설명한 가상메모리 지식이 없으면 이해 어려운 프로세스 관리의 다른 기능 설명
 
 
@@ -68,18 +68,24 @@ Swap:       4194304           0     4194304
   RSS  MAJFL  MINFL
 110288     0  26718
 ```
+
+
+![image](https://github.com/user-attachments/assets/80dadd9b-ff8a-4fa5-ac2c-39ff347edc49)
+
 ![copy-on-write](https://wizardzines.com/images/uploads/copy-on-write.png)    
 [copy-on-write](https://wizardzines.com/comics/copy-on-write/)
 - 리눅스에서 프로세스 시작으로 많이 쓰이는 시스템콜은 fork()와 clone()
-- 간단히 보기
+- 간단히 보기 좋음 > comics! 탭 
 
-- 
 ### execve() 함수 고속화: Demand paging
 - Demand paging: 처음에는 PTE만 생성, 실제 호출하여 사용시 물리 메모리 할당 
   - execve() 호출 시 PTE만 생성되고 실제 메모리 할당 X
   - 프로그램이 엔트리포인트에서 실행을 시작하면 연결 물리 메모리 없어서 page fault
   - page fault 처리로 물리 메모리 할당
   - 이하 프로세스 새로 생성시 반복
+
+![image](https://github.com/user-attachments/assets/a2290e30-f8f2-4be5-8f0a-c62d9497fdf5)    
+[[운영체제/OS] 메모리 관리 - 디맨드 페이징과 페이지 부재(Page Fault) Issue](https://studyandwrite.tistory.com/21)
 
 ## 프로세스 통신
 프로세스 통신 (IPC, Inter-Process Communication)
