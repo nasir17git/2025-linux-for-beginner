@@ -194,10 +194,18 @@ mount: /home/nasir/2025-linux-for-beginner/06/mnt: WARNING: device write-protect
 메모리맵입출력(memory-mapped I/O,MMIO): 현대적 장치는 MMIO 구조를 사용하여 디바이스 레지스터에 접근
 - x86_64 아키는 리눅스 커널이 자신의 모든 가상 주소 공간에 물리메모리를 매핑 
 - MMIO를 통해 장치를 조작한다면 주소 공간에 메모리 뿐만 아니라 레지스터도 매핑
-
-그림06-05/06 다시그리기
-
 - 처리 완료 확인을 위해 폴링 혹은 인터럽트 활용
+  
+![image](https://github.com/user-attachments/assets/9354a299-c547-4b8a-8e3a-e49df287f5be)    
+[Memory-Mapped vs. Isolated I/O](https://www.baeldung.com/cs/memory-mapped-vs-isolated-io)
+- 기존에는 port-mapped I/O라고 해서 필요시 별도로 메모리가 다른 디바이스를 호출해서 작동
+  - 별도 adress를 호출하기 위한 명령어의 사용이 필요(IN/OUT 등)
+ 
+![mmio](https://ars.els-cdn.com/content/image/3-s2.0-B9780123914903000047-f04-02-9780123914903.jpg)
+- MMIO에서는 메모리의 안쓰는(TOLM) 부분에 각 장치에 필요한 컨트롤러..?를 매핑
+- 일반 메모리와 동일한 명령어(Load/Store 등)로, 별도 하드웨어 없이 장치에 접근 가능
+
+
 
 ### 폴링
 > 폴링은 드라이버가 장치 레지스터를 반복적으로 읽어 상태 변화를 감지하는 방식,
@@ -286,13 +294,20 @@ PIW:          0          0          0          0          0          0          
 - 장치 처리가 빠르고, 처리 빈도가 높다면 예외적으로 폴링을 사용하기도 함
   - 평소에는 인터럽트 방식, 빈도가 높아지면 폴링으로 전환하는 디바이스 드라이버도 있음
 
+---
+
 > 사용자 공간 입출력은 응용 프로그램이 시스템 콜을 통해 커널을 거쳐 디바이스에 데이터를 읽고 쓰는 방식입니다.
+
 사용자 공간 입출력(userspace I/O, UIO) > 디바이스 레지스터를 매핑한 메모리 영역을 프로세스 가상 주소 공간에 매핑해, 프로세스에서 장치를 조작
 - 파이썬과 같은 userspace process로 디바이스 드라이버 생성 가능
 - UIO를 통해 디바이스 파일에 접근할 때 마다 CPU 모드가 전환되는걸 막아 장치 접근속도 빨라짐 기대가능
 - 처리 고속화 목적으로 UIO 사용하는 디바이스 드라이버는... 다양한 기법활용
   - 폴링을 사용하여 장치와 상호작용
   - 디바이스 드라이버 전용으로 논리 CPU 할당 등
+
+![uio](https://github.com/user-attachments/assets/f7a4c469-bfa9-4153-8697-baa5b9739f89)    
+[Userspace I/O drivers in a realtime context](https://www.osadl.org/fileadmin/dam/rtlws/12/Koch.pdf)
+- 커널 모듈의 모든 기능 대신 일부기능만 사용, 직접 개발대비 상대적으로 낮은 러닝커브
 
 ## 디바이스 파일명은 바뀌기 마련
 여러 장치에 연결되어있을 시, 각 장치와 디바이스 파일의 대응은 PC를 기동할때마다 변경됨
@@ -320,11 +335,11 @@ PIW:          0          0          0          0          0          0          
 ---
 
 anaconda.cfg    
-https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/6/html/installation_guide/sn-automating-installation#sn-automating-installation    
+https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/6/html/installation_guide/sn-automating-installation#sn-automating-installation      
 https://yongbi.tistory.com/3    
 
 리눅스 설치과정을 자동화하는 도구     
 여러개의 장치디바이스있을때 sda,sdb 지정해서 돌게설정       
 
-[mainboard](https://img.danawa.com/prod_img/500000/534/813/desc/prod_4813534/add_1/0.994463001484716641.jpg)
+![mainboard](https://img.danawa.com/prod_img/500000/534/813/desc/prod_4813534/add_1/0.994463001484716641.jpg)
 SATA 꽂는 위치차이인줄알았는데 아니였음
