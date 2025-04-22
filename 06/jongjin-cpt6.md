@@ -10,7 +10,7 @@
     - [폴링](#폴링)
     - [인터럽트](#인터럽트)
       - [일부러 폴링을 사용하는 경우](#일부러-폴링을-사용하는-경우)
-  - [디바이스 파일명은 바뀌기 마련](#디바이스-파일명은-바뀌기-
+  - [디바이스 파일명은 바뀌기 마련](#디바이스-파일명은-바뀌기-마련)
 
 ---
 
@@ -55,12 +55,14 @@ crw-rw-rw- 1 root tty       5,   0 Apr 20 23:30 tty
 crw--w---- 1 root tty       4,   0 Apr 20 23:30 tty0
 crw--w---- 1 root tty       4,   1 Apr 20 23:30 tty1
 crw--w---- 1 root tty       4,  10 Apr 20 23:30 tty10
-crw--w---- 1 root tty       4,  11 Apr 20 23:30 tty11
-
-
+crw--w---- 1 root tty       4,  11 Apr 20 23:30 tty1
 ```
+
+
 ### 캐릭터 장치
-> 리눅스에서 캐릭터 장치는 데이터를 바이트 단위로 순차적 입출력하는 장치로, 예를 들어 터미널, 키보드, 마우스 등이 이에 해당합니다.
+> 리눅스에서 캐릭터 장치는 데이터를 바이트 단위로 순차적 입출력하는 장치로, 예를 들어 터미널, 키보드, 마우스 등이 이에 해당합니다.  
+
+[문자 특수 장치(character special file) 또는 문자 장치(character device)는 버퍼링되지 않은, 직접 접근을 하드웨어 장치에 제공한다.](https://ko.wikipedia.org/wiki/%EC%9E%A5%EC%B9%98_%ED%8C%8C%EC%9D%BC#%EB%AC%B8%EC%9E%90_%EC%9E%A5%EC%B9%98)
 
 캐릭터장치(character device) > 읽고 쓰기는 가능, 장치 내부의 접근 장소 변경하는 탐색(seek) 불가
 - 대표적인 캐릭터 장치
@@ -103,6 +105,8 @@ echo hello > /dev/pts/4
 ### 블록 장치
 > 리눅스에서 블록 장치는 데이터를 블록 단위로 임의 접근할 수 있는 장치로, 하드디스크, SSD, USB 드라이브 등이 이에 해당합니다.
 
+[블록 특수 파일(block special file) 또는 블록 장치(block device)는 버퍼링된 접근을 하드웨어 장치에 제공하며, 이들의 세부 사항에 따라 어느 정도의 추상화를 제공한다](https://ko.wikipedia.org/wiki/%EC%9E%A5%EC%B9%98_%ED%8C%8C%EC%9D%BC#%EB%B8%94%EB%A1%9D_%EC%9E%A5%EC%B9%98)
+
 블록장치(block device)는 파일 읽기/쓰기 뿐만 아니라 탐색도 가능!
 - 대표적인 블록 장치
   - 저장장치(HDD, SSD)
@@ -119,12 +123,51 @@ echo hello > /dev/pts/4
 이거 빈파티션 없어서 못하는데> 루프장치로
 
 #### 루프 장치
-루프 장치는 리눅스에서 일반 파일을 마치 블록 장치처럼 마운트할 수 있게 해주는 가상 장치입니다.
+루프 장치는 리눅스에서 일반 파일을 마치 블록 장치처럼 마운트할 수 있게 해주는 가상 장치.
+- fallocate > 빈파일을 빠르게 생성할때 사용하는 명령어
+- losetup > loopback 디바이스와 파일을 연결
+  - 디스크 이미지 파일을 마치 실제 블록 장치처럼 사용할 수 있게 해줌
+```
+❯ fallocate -l 1G loopdevice.img
+❯ sudo losetup -f loopdevice.img
+❯ losetup -l
+NAME SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE                                                                               DIO LOG-SEC
+/dev/loop1
+             0      0         1  1 /mnt/docker-desktop-disk/isocache/entries/docker-desktop.iso/a9f8cc7082f33c3c8efdc39f0fcc7f7cfc5dc0711601f3ead58063717971fdb0
+                                                                                                                             0     512
+/dev/loop2
+             0      0         0  0 /home/nasir/2025-linux-for-beginner/06/loopdevice.img                                     0     512
+/dev/loop0
+             0      0         1  1 /mnt/docker-desktop-disk/isocache/entries/docker-wsl-cli.iso/20df88aaf6922239590204cfbb43807f8a73845c1a7e9e7f582990f5ced90e33
+
+❯ sudo mkfs.ext4 /dev/loop2
+mke2fs 1.45.5 (07-Jan-2020)
+Discarding device blocks: done                            
+Creating filesystem with 262144 4k blocks and 65536 inodes
+Filesystem UUID: 8234e8c8-570c-4630-a81d-7bba2cd60a28
+Superblock backups stored on blocks: 
+        32768, 98304, 163840, 229376
+
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (8192 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+❯ mkdir mnt
+❯ sudo mount /dev/loop0 mnt
+mount: /home/nasir/2025-linux-for-beginner/06/mnt: WARNING: device write-protected, mounted read-only.
+❯ sudo mount /dev/loop2 mnt
+❯ mount
+...
+/dev/loop2 on /home/nasir/2025-linux-for-beginner/06/mnt type ext4 (rw,relatime)
+
+```                       
 
 
 
 ## 디바이스 드라이버
 > 디바이스 드라이버는 리눅스 커널이 하드웨어 장치와 직접 통신할 수 있도록 중개하는 소프트웨어 계층입니다.
+
 디바이스 드라이버device driver > 프로세스가 디바이스 파일에 접근할때 동작
 - 장치 직접 조작시 각 장치에 내장된 레지스터 영역 읽고 쓰기 필요
 - 구체적인 레지스터 종류 및 조작법 정보는 각 장치 사양에 따라 달라짐
@@ -136,6 +179,12 @@ echo hello > /dev/pts/4
   4. 디바이스 드라이버가 장치의 처리 완료 확인 및 결과 수신
   5. CPU의 사용자 모드 복귀, 프로세스가 디바이스 드라이버 처리 완료 확인
 
+![dd](https://docs.oracle.com/cd/E19120-01/open.solaris/819-3159/images/driver.overview.gif)    
+[Device Drivers](https://docs.oracle.com/cd/E19120-01/open.solaris/819-3159/emjjs/index.html)
+![DDD](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbfsZNd%2FbtqvZYequdx%2FyUiCn9pUymPLaJ1wn5Knm1%2Fimg.png)
+[디바이스 드라이버 개요, 디바이스 드라이버 종류](https://butter-shower.tistory.com/29)
+- 지금까지 배웠던건 유저스페이스 <> 커널스페이스 <> 하드웨어
+- 그사이에 (장치에 따라) 디바이스 드라이버 추가
 
 ### 메모리맵 입출력(MMIO)
 > 메모리맵 입출력(MMIO)은 하드웨어 장치의 레지스터를 메모리 주소 공간에 매핑해 CPU가 메모리 접근 방식으로 제어하는 방식입니다.
@@ -261,3 +310,13 @@ PIW:          0          0          0          0          0          0          
   - 파일시스템의 레이블, UUID가 있다면 /dev/disk/by-label 또는 /dev/disk/by-uuid 디바이스 파일 생성
 - 단순 파일시스템의 실수 방지라면, mount 옵션에 레이블 또는 UUID를 사용하여 방지 가능
   - /etc/fstab에 /dev/sda같은 커널이름이 아닌 UUID 지정을 통해 지정 마운트 가능
+
+---
+
+anaconda.cfg
+https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/6/html/installation_guide/sn-automating-installation#sn-automating-installation
+
+https://yongbi.tistory.com/3
+
+리눅스 설치과정을 자동화하는 도구   
+여러개의 장치디바이스있을때 sda,sdb 지정 
