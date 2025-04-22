@@ -30,6 +30,11 @@
 ## 디바이스 파일
 > 리눅스에서 드라이버 파일은 커널이 하드웨어 장치를 제어할 수 있게 해주는 모듈 또는 코드로, /dev 아래의 디바이스 파일과 연결되어 장치와 사용자 공간 간의 인터페이스를 제공합니다.
 
+![DDD](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbfsZNd%2FbtqvZYequdx%2FyUiCn9pUymPLaJ1wn5Knm1%2Fimg.png)
+[디바이스 드라이버 개요, 디바이스 드라이버 종류](https://butter-shower.tistory.com/29)
+- 지금까지 배웠던건 유저스페이스 <> 커널스페이스 <> 하드웨어
+- 그사이에 (장치에 따라) 디바이스 드라이버 추가
+
 디바이스 드라이버(device driver)
 - 장치마다 존재함
   - 예를들어 저장 장치라면 /dev/sda, /dev/sdb와 같은 방식
@@ -181,10 +186,7 @@ mount: /home/nasir/2025-linux-for-beginner/06/mnt: WARNING: device write-protect
 
 ![dd](https://docs.oracle.com/cd/E19120-01/open.solaris/819-3159/images/driver.overview.gif)    
 [Device Drivers](https://docs.oracle.com/cd/E19120-01/open.solaris/819-3159/emjjs/index.html)
-![DDD](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbfsZNd%2FbtqvZYequdx%2FyUiCn9pUymPLaJ1wn5Knm1%2Fimg.png)
-[디바이스 드라이버 개요, 디바이스 드라이버 종류](https://butter-shower.tistory.com/29)
-- 지금까지 배웠던건 유저스페이스 <> 커널스페이스 <> 하드웨어
-- 그사이에 (장치에 따라) 디바이스 드라이버 추가
+
 
 ### 메모리맵 입출력(MMIO)
 > 메모리맵 입출력(MMIO)은 하드웨어 장치의 레지스터를 메모리 주소 공간에 매핑해 CPU가 메모리 접근 방식으로 제어하는 방식입니다.
@@ -222,6 +224,10 @@ mount: /home/nasir/2025-linux-for-beginner/06/mnt: WARNING: device write-protect
     - 확인 간격을 얼마나 줄지의 문제
       - 간격 김 > p0 처리완료의 시간이 늦어짐
       - 간격 짧음 > 원점회귀, 자원낭비 커짐
+
+
+![interruptoverpoliing](https://i.ytimg.com/vi/7F4qQOSJGDw/sddefault.jpg)      
+[Operating Systems Lecture 17: Communication with I/O devices](https://youtu.be/7F4qQOSJGDw?si=xdoGDsznnfS2sJgC&t=495)      
 
 
 ### 인터럽트
@@ -313,10 +319,12 @@ PIW:          0          0          0          0          0          0          
 
 ---
 
-anaconda.cfg
-https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/6/html/installation_guide/sn-automating-installation#sn-automating-installation
+anaconda.cfg    
+https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/6/html/installation_guide/sn-automating-installation#sn-automating-installation    
+https://yongbi.tistory.com/3    
 
-https://yongbi.tistory.com/3
+리눅스 설치과정을 자동화하는 도구     
+여러개의 장치디바이스있을때 sda,sdb 지정해서 돌게설정       
 
-리눅스 설치과정을 자동화하는 도구   
-여러개의 장치디바이스있을때 sda,sdb 지정 
+[mainboard](https://img.danawa.com/prod_img/500000/534/813/desc/prod_4813534/add_1/0.994463001484716641.jpg)
+SATA 꽂는 위치차이인줄알았는데 아니였음
