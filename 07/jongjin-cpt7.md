@@ -4,7 +4,7 @@
   - [파일 접근 방법](#파일-접근-방법)
   - [메모리 맵 파일](#메모리-맵-파일)
   - [일반적인 파일 시스템](#일반적인-파일-시스템)
-  - [쿼터(용량 제한)](#쿼터\(용량 제한\))
+  - [쿼터(용량 제한)](#쿼터(용량 제한))
   - [파일 시스템 정합성 유지](#파일-시스템-정합성-유지)
     - [저널링을 사용한 오류 방지](#저널링을-사용한-오류-방지)
     - [카피 온 라이트로 오류 방지](#카피-온-라이트로-오류-방지)
@@ -44,6 +44,14 @@
   - 메타 데이터
     - 파일 관리 목적의 부가적 정보 (종류, 권한, 등)
 
+![Unix File Structure](https://teaching.healthtech.dtu.dk/unix/images/3/3e/File_structure2.png)      
+[The Unix File system](https://teaching.healthtech.dtu.dk/unix/index.php/Unix_architecture_and_file_system)
+- 사전 정의된 directory와 사용자가 생성가능한 directory
+
+[Linux File System Directory Architecture](https://thesagediary.wordpress.com/2020/04/14/linux-file-system-directory-architecture/)
+- 각 시스템 디렉토리의 역할 및 기능 설명
+- 간단하게 [이런것](https://substackcdn.com/image/fetch/w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9ee1bb1e-32cf-4b6a-96ac-878f652ac53d_1200x1581.gif)도 있음
+
 ## 파일 접근 방법
 - POSIX에 정의된 함수로 접근 가능 > 파일시스템 종류 상관없이 사용 가능
 - 파일 조작
@@ -60,10 +68,13 @@
 - 처리 과정
   1. 파일시스템 조작용 함수가 내부적으로 파일시스템 조작 시스템콜 호출
   2. 커널 내부 가상 파일 시스템(Virtual File System, VFS) 동작 및 각 처리 호출
-  3. 파일 시스템 처리가 디바이스 드라이버 호출
+  3. 파일 시스템 처리가 디바이스 드라이버 호출      
     ㄴ 파일 시스템 처리 <> 디바이스 드라이버 간 블록 계층 존재(9장)
   4. 디바이스 드라이버가 장치 조작
 
+![image](https://github.com/user-attachments/assets/1989168b-b30e-4faf-8429-0e0e9cb77deb)
+- [Block Diagram from Anatomy of the Linux File System](https://embedkari.com/linux-filesystem/)
+- [Anatomy of the Linux file system](https://developer.ibm.com/tutorials/l-linux-filesystem/?mhsrc=ibmsearch_a&mhq=Anatomy%20of%20the%20Linux%20File%20System&mhp=2)
 
 ## 메모리 맵 파일
 - 메모리 맵 파일(memory-mapped file): 파일 영역을 가장 주소 공간에 매핑
@@ -74,7 +85,7 @@
 
 ./filemap.go
 - testfile을 열어서 메모리 공간 매핑 확인
-  1. 프로세스 메모리 맵 상황(/proc/<pid>/maps) 출력
+  1. 프로세스 메모리 맵 상황(/proc/\<pid\>/maps) 출력
   2. testfile 열어서 파일을 mmap()으로 메모리 공간 매핑
   3. 프로세스 메모리 맵 상황 다시 출력
   4. 매핑된 영역의 데이터를 hello > HELLO 변경
@@ -138,7 +149,10 @@ HELLO
   - 동작별 처리 속도
   - 표준 기능 외 추가 기능 유무
 
-
+![image](https://github.com/user-attachments/assets/71a136e9-d96a-41f6-af9a-19d23841dba9)
+- [Virtual filesystems in Linux: Why we need them and how they work](https://opensource.com/article/19/3/virtual-filesystems-linux)
+- 각 파일시스템별 윗단/아랫단과의 연결 관계
+  
 ## 쿼터(용량 제한)
 - 쿼터(quota): 시스템에서 용도별로 사용 가능한 fs 용량 제한 기능 필요
   - 다양한 용도 시스템 사용 시, 특정 기능으로 인해 다른 기능 실행에 필요한 용량 부족 문제 발생 가능
@@ -178,6 +192,11 @@ HELLO
     - 저널 로그 갱신 중 (1) 에러 > 저널로그 drop
     - 실제 fs 갱신 중 (2) 에러 > 저널로그 재시작
 
+![journaling](https://i0.wp.com/foxutech.com/wp-content/uploads/2017/03/Journaling-FileSystem.png?fit=640%2C287&ssl=1)
+- [Journaling FileSystem & Its 3 types](https://foxutech.com/journaling-filesystem/)
+
+
+
 ### 카피 온 라이트로 오류 방지
 - fs 간 저장 방법의 차이
   - 저널링(ext,XFS) > 파일 갱신 시 동일 위치에 데이터 갱신
@@ -188,6 +207,10 @@ HELLO
     - 링크 완료시 (성공) > 기존 파일 제거
     - 변경 처리중 에러 (1) > 중간데이터 삭제 하고 재생성
  
+![image](https://github.com/user-attachments/assets/63386e1c-bbb1-4ae8-91d1-4ad3567b2148)
+- [COW and clones: how they save space and SSD wear](https://eclecticlight.co/2023/05/04/cow-and-clones-how-they-save-space-and-ssd-wear/)
+- 실제 데이터(FA,FB,FC,FD)는 그대로 두고 변경되는 AB데이터만 변경 후 메타데이터 수정
+
 
 ### 뭐니 뭐니 해도 백업
 - 위의 방법을 통해 오류의 빈도를 줄일 수 있으나 궁극적인 제거는 불가
@@ -217,10 +240,14 @@ HELLO
 - 처리 과정
   1. A 데이터를 다른 새로운 영역에 복사
   2. 새로운 영역 데이터를 갱신
-  3. 
 
 - 원본 시스템과 데이터를 공유 > 공유 데이터 손실 시 스냅샷도 손실
 - 백업 작업시 입출력을 멈춰야함, 스냅샷 사용시 스냅샷 중간의 짧은 시간만 입출력 멈추고 스냅샷 대상 백업할 수 있어 장점
+
+![image](https://github.com/user-attachments/assets/512f6401-b9c7-4339-b1bf-6b896b737377)
+[Exploiting Point in Time Copy Services](https://technoscooop.wordpress.com/tag/redirect-on-write/)
+- COW와 비슷하게 동일 데이터를 바라보는 메타데이터(스냅샷) 생성 이후 변경이 필요한 데이터만 스냅샷에 연결
+
 
 ### 멀티 볼륨
 - ext4/XFS > 1개의 파티션에 단일 파일 시스템 생성
@@ -229,6 +256,10 @@ HELLO
   - 서브 볼륨은 LVM의 논리볼륨+파일시스템과 유사
 - RAID 구성 가능
   - RAID 0, 1, 10, 5, 6, dup(이중화)
+
+
+![image](https://github.com/user-attachments/assets/c5fb9f82-28e2-4513-8736-ddebdffa6309)
+
 
 #### 결국 어떤 파일 시스템을 사용하면 좋은가?
 - 모든 상황에서 만족스러운 파일시스템은 X, 장단점 존재
