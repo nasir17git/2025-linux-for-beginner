@@ -1,23 +1,33 @@
+## TOC
+
+- [메모리 계층](#메모리-계층)
+- [캐시 메모리](#캐시-메모리)
+  - [참조 지역성](#참조-지역성)
+  - [계층형 캐시 메모리](#계층형-캐시-메모리)
+  - [캐시 메모리 접근 속도 측정](#캐시-메모리-접근-속도-측정)
+- [Simultaneous Multi Threading(SMT)](#simultaneous-multi-threadingsmt)
+- [페이지 캐시](#페이지-캐시)
+  - [페이지 캐시 효과](#페이지-캐시-효과)
+- [버퍼 캐시](#버퍼-캐시)
+- [쓰기 타이밍](#쓰기-타이밍)
+- [직접 입출력](#직접-입출력)
+- [스왑](#스왑)
+- [통계 정보](#통계-정보)
+
 # 메모리 계층
 
+![image](https://github.com/user-attachments/assets/0deb5f71-ed30-49f1-860b-0ea8f53204c4)    
+[Memory Hierarchy in Computer Architecture](https://binaryterms.com/memory-hierarchy-in-computer-architecture.html)
 
-https://cstaleem.com/wp-content/uploads/2020/08/Memory-Hierarchy-in-COA.png
-
-
-Memory Hierarchy Design
-
-
-https://binaryterms.com/wp-content/uploads/2023/02/Memory-Hierarchy-.jpg
-https://binaryterms.com/memory-hierarchy-in-computer-architecture.html
-기억장치는 계층별로 용량/가격/성능이 다르다.
-이 챕터에서는 구체적으로 각 장치별 크기 및 성능 차이, 
-이 차이점을 고려한 하드웨어 & 리눅스의 작동을 확인한다
-
+- 기억장치는 계층별로 용량/가격/성능이 다름
+- 구체적으로 각 장치별 크기 및 성능 차이, 이 차이점을 고려한 하드웨어 & 리눅스의 작동을 확인
 
 ## 캐시 메모리
 
-https://cs61.seas.harvard.edu/site/img/storage-hierarchy.png
-https://cs61.seas.harvard.edu/site/2021/Storage1/
+
+![image](https://github.com/user-attachments/assets/fe8ed99d-ca77-4be8-be19-0fb47f40f547)    
+[Storage 1: Caches, memory hierarchy, buffer cache, system calls](https://cs61.seas.harvard.edu/site/2021/Storage1/)
+
 - 캐시 메모리(Cache Memory): CPU와 메모리 간 속도 차이를 줄이기 위해 자주 사용하는 데이터를 임시로 저장하는 고속 메모리
 - 일반적인 CPU의 동작
   1. 명령을 읽고 내용에 따라 메모리에서 레지스터로 데이터 읽기
@@ -29,8 +39,8 @@ https://cs61.seas.harvard.edu/site/2021/Storage1/
   - 메모리 > 레지스터 데이터 읽을때, 캐시라인(cache-line) 단위로 데이터 읽어서 레지스터로 전달
   - 하드웨어 단에서 작동하므로 커널 개입 X
 
-https://people.csail.mit.edu/devadas/6.004/Lectures/lect18/img018.GIF
-Dirty Bits for Write-Back Caches
+![image](https://people.csail.mit.edu/devadas/6.004/Lectures/lect18/img018.GIF)      
+[Dirty Bits for Write-Back Caches](https://people.csail.mit.edu/devadas/6.004/Lectures/lect18/sld018.htm)
 
 - 캐시 메모리의 동작 방식
   - CPU가 메모리에 접근 시, 캐시 메모리에 데이터 복사
@@ -64,6 +74,7 @@ Dirty Bits for Write-Back Caches
 
 
 ### 계층형 캐시 메모리
+[캐시 메모리](#캐시-메모리)
 - 계층형 캐시 메모리(Hierarchical Cache): 속도와 크기가 다른 여러 단계의 캐시(L1, L2, L3 등)를 계층적으로 배치해 CPU와 메인 메모리 간 성능 차이를 효율적으로 완화하는 구조
 - 최근의 CPU는 캐시 메모리를 L1,L2,L3로 계층화된 구조 형태로 관리
   - L1에 가까울수록 빠르고 용량이 적음, 멀수록 느려지고 용량 많음
@@ -112,6 +123,8 @@ Data
   2. 1에서 나온 결과를 바탕으로 그래프를 작성해서 cache.jpg 파일로 저장
     - plot-cache.py 파일을 통해 그래프 생성
 
+![image](https://github.com/nasir17git/2025-linux-for-beginner/blob/main/08/cache.jpg)
+
 - 각 캐시 크기를 경계를 접근 시간은 계단식 변화,
 - 버퍼 크기가 각 L1,2,3 캐시 메모리 용량 도달 및 전후로 접근 속도 변화
 - 버퍼 접근시간 외에 명령문 포함된 시간이라 버퍼 크기 작을때는 영향 받아 속도 떨어짐 참고
@@ -133,8 +146,8 @@ Data
 - CPU > 메모리 접근 속도 느림: 캐시 메모리
 - CPU > 저장장치 접근 속도 느림: 페이지 캐시
 
-https://user-images.githubusercontent.com/62331555/81669624-70a86e80-9481-11ea-8183-0e578c3b57f9.png
-page cache - horoyoiiv/linux GitHub Wiki
+![image](https://user-images.githubusercontent.com/62331555/81669624-70a86e80-9481-11ea-8183-0e578c3b57f9.png)    
+[page cache - horoyoiiv/linux GitHub Wiki](https://github-wiki-see.page/m/horoyoiiv/linux/wiki/page-cache)
 
 - 캐시메모리: 데이터를 캐시 메모리에 캐시
 - 페이지캐시: 파일 데이터를 메모리에 캐시
