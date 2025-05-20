@@ -1,20 +1,30 @@
 # 블록 계층
 
-https://i.sstatic.net/jAtlb.png
-Which components of Linux IO subsystem are device-independent and device-dependent?
-Bovet's Understanding the Linux Kernel
-
-https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-wIHmLWiYgWrdttkbIlcD5znNfxk9w2OkFqzxS2uhF3QTGltKdzvnXuuNKZqLsXrAw6TKCj_JhjH3BqHHxuY5m-Lo2UDXsadjuwzSHcvMpYPr4HnncvpEJk5Q_cZsa-xcuxyLtsnKu4U/s1600/block+hierarchy+(3).png
-OPW, Linux: The block I/O layer, part 1 - Base concepts
-
-Linux Kernel Development Love, Robert 
-
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://i.sstatic.net/jAtlb.png" width="400"><br>
+      <a href="https://unix.stackexchange.com/questions/258410/which-components-of-linux-io-subsystem-are-device-independent-and-device-depende" target="_blank">
+        Understanding the Linux Kernel, Bovet
+      </a>
+    </td>
+    <td align="center">
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-wIHmLWiYgWrdttkbIlcD5znNfxk9w2OkFqzxS2uhF3QTGltKdzvnXuuNKZqLsXrAw6TKCj_JhjH3BqHHxuY5m-Lo2UDXsadjuwzSHcvMpYPr4HnncvpEJk5Q_cZsa-xcuxyLtsnKu4U/s1600/block+hierarchy+(3).png" width="400"><br>
+      <a href="https://ari-ava.blogspot.com/2014/06/opw-linux-block-io-layer-part-1-base.html" target="_blank">
+        Linux Kernel Development, Love, Robert
+      </a>
+    </td>
+  </tr>
+</table>
 
 블록 계층(block layer): 사용자 요청을 파일시스템 → 가상 파일시스템(VFS) → 페이지 캐시 → 블록 I/O 계층 → 디바이스 드라이버 → 실제 디스크 순으로 전달하며, I/O 스케줄링과 캐싱을 통해 성능을 최적화하는 계층 구조
 
 - 파일 시스템과 장치 드라이버 사이에서, 저장장치(블록장치)의 성능 향상을 위한 커널 기능
 
 ## 하드 디스크의 특징
+
+![image](https://github.com/user-attachments/assets/2823027f-e48b-4c93-b3f5-fbd2e7606781)    
+
 
 - 플래터(platter): 자기 정보로 표현된 데이터를 저장하는 자기 디스크
 - 섹터(sector): 디스크에서 데이터를 저장하고 읽는 최소 단위
@@ -34,11 +44,18 @@ Linux Kernel Development Love, Robert
 
 
 ## 블록 계층의 기본 기능
+
 - 연속된 데이터 처리는 빠르다는 하드디스크 특징 살림
+- 
+![image](https://github.com/user-attachments/assets/1bc68854-1c61-453a-8081-83a8512c9237)    
+[Linux I/O scheduler for solid-state drives](https://www.cnblogs.com/coryxie/p/3983930.html)    
 
 - 입출력 스케줄러(I/O scheduler): 디바이스 드라이버에서 전달받은 입출력 요청을 수집하고, 이를 최적화된 순서로 전달
   - 합치기(merge): 연속된 섹터의 요청 합치기
   - 정렬(sort): 비연속 섹터의 I/O요청 순서를 섹터 번호 순 정렬
+
+![image](https://github.com/user-attachments/assets/2fb71ccd-46e8-4a95-81b8-f6d2c061fb71)    
+[Storage subsystem performance: analysis and recipes](https://gudok.xyz/sspar/#_random_access)
 
 - 미리 읽기(readahead): 데이터 전송 시 필요한 데이터를 미리 읽어오기
   - 메모리와 유사한 공간적 지역성 활용
@@ -148,12 +165,18 @@ jq '.jobs[].write | {bw_bytes, iops, lat_ns}' fio-output.json
 - hdd, ssd 등 저장 장치 설정값 전달하여 성능 측정 후 이미지 생성
 
 ### 패턴 A 측정 결과
+![990](https://github.com/user-attachments/assets/3ec16f4f-198f-4e34-8c37-aae9dce8c365)
+
+
 - I/O 스케줄러로 인해 디스크 입출력 요청이 효율적인 순서로 변경됨
   - IOPS 증가
   - 레이턴시 감소
 
 
 ### 패턴 B 측정 결과
+![993](https://github.com/user-attachments/assets/832327b6-34b6-4e80-a305-d00436f4bfb8)
+
+
 - 미리 읽기 효과로 인해 단위 시간당 데이터 전송량 증가
   - 스루풋 증가
 
@@ -175,6 +198,11 @@ jq '.jobs[].write | {bw_bytes, iops, lat_ns}' fio-output.json
 ## 블록 계층이 NVMe SSD 성능에 미치는 영향
 
 ### 패턴 A 측정 결과
+
+![991](https://github.com/user-attachments/assets/a2851f8a-f9eb-4764-9d82-0df8fabdad0e)
+![992](https://github.com/user-attachments/assets/9a2d0f62-0a48-424c-8664-e04e6c52d5f6)
+
+
 - I/O 스케줄러로 인해 일부 구간 성능 손실 발생
   - IOPS 관점
     - 무효 및 병렬도 낮은 구간의 IOPS 높음
@@ -184,6 +212,9 @@ jq '.jobs[].write | {bw_bytes, iops, lat_ns}' fio-output.json
 - 기본적으로 HDD 대비 IOPS등 100배 이상 상승
 
 ### 패턴 B 측정 결과
+![994](https://github.com/user-attachments/assets/9b242004-1114-4112-940b-6e58d92f44d7)
+
+
 - 미리 읽기 효과로 인해 단위 시간당 데이터 전송량 증가
   - 스루풋 증가
   - I/O 활성화 시 성능 감소
@@ -191,8 +222,28 @@ jq '.jobs[].write | {bw_bytes, iops, lat_ns}' fio-output.json
 
 #### 실제 성능 측정
 
+
+![image](https://github.com/user-attachments/assets/6bb3ed14-60d3-4e16-9f22-7b32b91a84bf)
+[Identifying Performance Bottlenecks: Tips and Techniques](https://blog.nashtechglobal.com/identifying-performance-bottlenecks-tips-and-techniques/)
+
+- Performance bottleneck, applicatiom perfomance management(APM)/analysis, etc...
+
 - 실제 성능 측정시에는 다양한 부분의 영향을 받음
   - 네트워크 성능 (대역폭)
   - 어플리케이션 성능 (CPU, 메모리 등)
   - 저장 장치 성능 (스토리지)
 - 각 처리에 소요되는 시간 측정 필요
+
+
+![image](https://github.com/user-attachments/assets/67f2dfd5-d537-4f78-80e5-e14b07ec8552)  
+![image](https://github.com/user-attachments/assets/4b4d2998-76f3-461a-bf3d-8329dd7e7375)    
+
+- apm, (distributed) tracing, observability, etc...
+
+### 저장장치 성능 측정
+
+![image](https://github.com/user-attachments/assets/8c05994f-7a9f-41dd-b5b8-5497fabe2648)
+[Increase IOPS and throughput with sharding](https://planetscale.com/blog/increase-iops-and-throughput-with-sharding)      
+- 결국엔 자기네 솔루션 쓰라는거긴 한데
+- 워크로드에 따라 동일한 스토리지라도 기록된 성능만큼 안나올 수 있다
+
