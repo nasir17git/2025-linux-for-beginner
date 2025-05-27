@@ -2,6 +2,10 @@
 가상머신(Virtual Machine)의 구현 과정 및 동작 방식 확인
 
 ## 가상화 기능이란 무엇인가
+
+![image](https://github.com/user-attachments/assets/e0e10639-d692-4500-a16e-a430ac2f3331)
+- [Introduction to Virtualization](https://docs.openeuler.org/en/docs/20.09/docs/Virtualization/introduction-to-virtualization.html)
+
 - 가상화 기능(virtualization)
   - 하드웨어 자원을 추상화하여 하나의 컴퓨터에서 여러 개의 가상 컴퓨터를 실행할 수 있도록 하는 기술
   - PC 또는 서버등 물리 기기에서 VM 을 동작하는 소프트웨어 기능 및 동작을 돕는 하드웨어 기능의 조합
@@ -21,6 +25,10 @@
 
 
 ## 가상화 소프트웨어
+
+![image](https://memverge.com/wp-content/uploads/2021/03/Memory-Machine-installed-underneath-VM-3.png)
+- [Software-Defined Memory: Platform for Virtual Machines](https://memverge.com/software-defined-memory-platform-for-virtual-machines/)
+
 - 물리기기에 설치된 가상화 SW가 VM의 생성, 관리, 삭제를 담당
 - 물리 기기의 하드웨어 자원을 가상머신에 분배, 물리 기기의 CPU를 물리 CPU(Physical CPU,PCPU)와 가상 CPU(Virtual CPU,VCPU)로 분리
 - 커널과 그 위의 프로세스와 유사한 가상화 SW와 그 위의 VM 
@@ -178,6 +186,10 @@ ps ax | grep qemu
   - writethrough 설정시 쓰기 작업 동기화 가능
 
 ### 반가상화 장치와 virtio-blk
+
+![image](https://github.com/user-attachments/assets/9e8cb5fd-6ab5-4cc2-a091-765bf991c512)
+- [Full virtualization vs. paravirtualization: Key differences](https://www.techtarget.com/searchitoperations/tip/Full-virtualization-vs-paravirtualization-Key-differences)
+
 - 반가상화(para virtualization)
   - VM에서 하드웨어를 완전히 에뮬레이션 하는 대신, 가상화 SW및 VM이 별도 인터페이스로 접속해 성능 개선
   - 이러한 장치를 반가상화 장치, 디바이스 드라이버를 반가상화 드라이버라고 지칭
@@ -204,6 +216,32 @@ ps ax | grep qemu
   3. 1,2 작업을 수행하도록 지시
 - 이때 CPU는 VMX-nonroot, VMX-root 모드를 왔다갔다 하면서 작업 수행
 - virtio-blk 장치에서는 다수의 명령어를 한꺼번에 큐에 넣고 처리할 수 있어 장치 접근 및 모드전환이 한번만 수행되어 시간 절감
+
+
+
+
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://insujang.github.io/assets/images/210310/KVM_QEMU_virtIO_Process.png" width="400"><br>
+      <a href="https://insujang.github.io/2021-03-10/virtio-and-vhost-architecture-part-1/" target="_blank">
+        Virtio and Vhost Architecture - Part 1
+      </a>
+    </td>
+    <td align="center">
+      <img src="https://flowlet.net/img/2023-03-21-virtio-vhost-net/2023-03-25-virtio-buffer-flow.jpg" width="400"><br>
+      <a href="https://flowlet.net/2023/03/21/virtio-vhost-net/" target="_blank">
+        I/O虚拟化 105：virtio 与 vhost-net 架构
+      </a>
+    </td>
+  </tr>
+</table>
+
+- 중국어라서 그런건지 사실 저 블로그는 네트워크에 관한 글이라서 인지는 모르겠지만 동작을 설명한 다른 다이어그램들 찾아볼때 너무 끔찍해요
+- 지금까지의 본문그림도 그렇고 본문만 보면 잘 모르겠는데 (물론 스킵된것도 있겠지만서도) 동작을 간단히 잘 설명한 입문서에 적절한 최고의 책으로 평가수정중
+
+
 
 #### PCI 패스스루
 - VM에서 물리장치를 직접 호출하여 성능 개선
