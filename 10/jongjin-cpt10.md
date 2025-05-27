@@ -190,6 +190,10 @@ ps ax | grep qemu
 ![image](https://github.com/user-attachments/assets/9e8cb5fd-6ab5-4cc2-a091-765bf991c512)
 - [Full virtualization vs. paravirtualization: Key differences](https://www.techtarget.com/searchitoperations/tip/Full-virtualization-vs-paravirtualization-Key-differences)
 
+- 가끔 전가상화가 빠른가 반가상화가 빠른가하면 헷깔렸고
+- 직관으로는 반가상화는 중간에 레이어하나끼니까(또는 이름이 반만한다고하니까 약해보여서) 느려진다고 생각했던 경우가 종종 있었는데
+- 인제는 덜헷깔릴것같네요
+
 - 반가상화(para virtualization)
   - VM에서 하드웨어를 완전히 에뮬레이션 하는 대신, 가상화 SW및 VM이 별도 인터페이스로 접속해 성능 개선
   - 이러한 장치를 반가상화 장치, 디바이스 드라이버를 반가상화 드라이버라고 지칭
