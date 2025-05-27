@@ -143,7 +143,25 @@ ps ax | grep qemu
 - 물리기기 저장장치의 파일이, VM의 저장장치로 활용
 - libvirt 설정파일을 통해 확인 가능
 - virsh dumpxml ubuntu2004 | grep -A 5 disk
-  - /var
+  - 호스트의 /home/nasir/.local/share/libvirt/images/ubuntu2004-1.qcow2 파일이 게스트의 저장장치로 활용 중
+
+```
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/home/nasir/.local/share/libvirt/images/ubuntu2004-1.qcow2' index='1'/>
+      <backingStore/>
+      <target dev='vda' bus='virtio'/>
+      <alias name='virtio-disk0'/>
+      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+    </disk>
+    <controller type='usb' index='0' model='ich9-ehci1'>
+      <alias name='usb'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x7'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci1'>
+```
 
 ### 가상 머신과 저장소 입출력
 - 물리기기의 저장소 입출력(storage I/O)는 물리기기의 유저스페이스의 프로세스 > 커널의 파일시스템 > 커널의 디바이스 드라이버 > 저장장치 순으로 작동후 역순으로 프로세스까지 복귀
