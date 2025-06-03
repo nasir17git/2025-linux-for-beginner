@@ -5,6 +5,10 @@
   - 단순 사용은 쉽지만 문제시 조사 또는 구조 이해는 어렵다
 
 ## 가상머신과의 차이점
+
+![image](https://github.com/user-attachments/assets/b1e40f4e-977d-40e4-a2dc-2e7bbc909762)
+[Why Container Virtualization?](https://anilktalla.medium.com/why-container-virtualization-abb8bfc04048)
+
 - 유사점
   - 각각 독립된 프로세스 실행환경을 제공
 - 차이점
@@ -30,6 +34,10 @@
   - HW 접근속도: VM처럼 하드웨어 접근에 의해 물리기기에 제어 넘기는 과정 X
 
 ## 컨테이너 종류
+
+![image](https://github.com/user-attachments/assets/e01fed30-e0ce-4e71-b2e8-6e58c3c81cbb)
+[What's a Nestybox System Container?](https://blog.nestybox.com/2019/09/13/system-containers.html)
+
 - 크게 2가지 종류의 컨테이너로 구분 가능
   - 시스템 컨테이너
     - 일반 리눅스 환경처럼 다양한 앱 실행을 위한 컨테이너
@@ -50,6 +58,10 @@
   - 마운트 네임스페이스(mount namespace): 독립된 fs 마운트 포인트 제공
 
 ### 프로세스ID 네임스페이스
+
+![image](https://github.com/user-attachments/assets/66590a2e-6ada-4f46-8972-624b3202f923)
+[Visualization of PID namespaces.](https://www.researchgate.net/figure/sualization-of-PID-namespaces-Each-new-namespace-has-its-own-hierarchy-of-PIDs-and_fig1_357295376)
+
 - 시스템 시작 시 모든 프로세스가 소속된 루트 프로세스ID 네임스페이스(root pid ns) 존재
   - 루트 프로세스ID 네임스페이스는 모든 프로세스가 소속되어 있음
   - 각 프로세스는 pid를 통해 다른 프로세스를 식별 가능(A>B,C)
